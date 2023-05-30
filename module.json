@@ -1,0 +1,289 @@
+{
+	"name": "ADM-OSC",
+	"type": "OSC",
+	"path": "Immersive solution",
+	
+	"version": "1.0",
+	"description": "Create a basic client/server that implement basic ADM-OSC communication with stable parameters.\n\n
+    Please visit https://github.com/immersive-audio-live/ADM-OSC to know more about Live ADM-OSC initiative.\n\n
+    Chataigne Module specific documentation can be found in the README on GitHub:",
+	"url": "https://github.com/madees/ADM-OSC-Module",
+	"downloadURL": "https://github.com/madees/ADM-OSC-Module/archive/master.zip",
+	
+	"hasInput": true,
+	"hasOutput": true, 
+	"hideDefaultCommands": false,
+	"hideDefaultParameters": [
+		"colorSendMode",
+		"autoRange",
+		"autoFeedback",
+		"pass_through",
+		"input",
+		"outputs",
+		"useHierarchy",
+		"colorSendMode",
+		"booleanSendMode"
+	],
+	
+	"defaults": {
+		"autoAdd": false,
+		"oscInput": {
+			"localPort": 38033
+		},
+		"OSC Outputs": {
+			"OSC Output": {
+				"local": true,
+				"remoteHost": "192.168.1.1",
+				"remotePort": 9001
+			}
+		}
+	},
+	
+	"parameters": {
+    "Number of objects": {
+      "description":"Quantity of ojects properties values to receive.\n",
+      "type": "Integer",
+      "defaults":64,
+      "min":1,
+      "max":128
+    },
+		"Get update Rate": {
+			"description":"Automatically get the objects values updated from device.\nRate by second, default is 20 Hz (50ms interval).\n",
+			"type": "Integer",
+			"default": 20,
+			"min":1,
+			"max":50
+		},
+		"Get Sound Objects positions XYZ": {
+			"description":"Update automatically objects container values.\n",
+			"type": "Boolean",
+			"default":false
+		},
+    "Get Sound Objects positions AED": {
+			"description":"Update automatically objects container values.\n",
+			"type": "Boolean",
+			"default":false
+		},
+    "Get Sound Objects gain": {
+			"description":"Update automatically objects container values.\n",
+			"type": "Boolean",
+			"default":false
+		},
+    "Get Sound Objects cartesian": {
+			"description":"Update automatically objects container values.\n",
+			"type": "Boolean",
+			"default":false
+		}
+    
+	},
+	
+	"scripts": [
+		"ADM-OSC.js"
+	],
+	
+	"values": {
+  },
+
+  "commands":{
+    "azim":
+		{
+			"menu":"obj",
+			"callback":"azim",
+			"parameters":
+			{
+				"Source index":
+				{
+					"type":"Integer",
+					"min":1,
+					"max":128
+				},
+				"Azimuth angle":
+				{
+					"type":"Float",
+          "min":-180,
+          "max":180
+				}
+			}
+		},
+    "elev":
+		{
+			"menu":"obj",
+			"callback":"elev",
+			"parameters":
+			{
+				"Source index":
+				{
+					"type":"Integer",
+					"min":1,
+					"max":128
+				},
+				"Elevation angle":
+				{
+					"type":"Float",
+          "min":-90,
+          "max":90
+				}
+			}
+		},
+    "dist":
+		{
+			"menu":"obj",
+			"callback":"dist",
+			"parameters":
+			{
+				"Source index":
+				{
+					"type":"Integer",
+					"min":1,
+					"max":128
+				},
+				"Distance":
+				{
+					"type":"Float",
+          "min":0,
+          "max":1
+				}
+			}
+		},
+    "aed":
+    {
+      "menu":"obj",
+			"callback":"aed",
+			"parameters":
+			{
+				"Source index":
+				{
+					"type":"Integer",
+					"min":1,
+					"max":128
+				},
+				"(A,E,D)":
+				{
+					"type":"Point3D",
+          "min":[-180, -90, 0],
+          "max":[180, 90, 1]
+				}
+			}
+    },
+    "x":
+    {
+      "menu":"obj",
+			"callback":"x",
+			"parameters":
+			{
+				"Source index":
+				{
+					"type":"Integer",
+					"min":1,
+					"max":128
+				},
+				"x":
+				{
+					"type":"Float",
+          "min":0,
+          "max":1
+				}
+			}
+		},
+    "y":
+    {
+      "menu":"obj",
+			"callback":"y",
+			"parameters":
+			{
+				"Source index":
+				{
+					"type":"Integer",
+					"min":1,
+					"max":128
+				},
+				"y":
+				{
+					"type":"Float",
+          "min":0,
+          "max":1
+				}
+			}
+		},
+    "z":
+    {
+      "menu":"obj",
+			"callback":"z",
+			"parameters":
+			{
+				"Source index":
+				{
+					"type":"Integer",
+					"min":1,
+					"max":128
+				},
+				"z":
+				{
+					"type":"Float",
+          "min":0,
+          "max":1
+				}
+			}
+		},
+    "xyz":
+    {
+      "menu":"obj",
+			"callback":"xyz",
+			"parameters":
+			{
+				"Source index":
+				{
+					"type":"Integer",
+					"min":1,
+					"max":128
+				},
+				"xyz":
+				{
+					"type":"Point3D",
+          "min":[-1,-1,-1],
+          "max":[1,1,1]
+				}
+			}
+		},
+
+    "gain":
+    {
+			"menu":"obj",
+			"callback":"gain",
+			"parameters":
+			{
+				"Source index":
+				{
+					"type":"Integer",
+					"min":1,
+					"max":128
+				},
+				"Gain":
+				{
+					"type":"Float",
+          "min":0,
+          "max":1
+				}
+			}
+		},
+    "cartesian":
+    {
+			"menu":"config",
+			"callback":"cartesian",
+			"parameters":
+			{
+				"Source index":
+				{
+					"type":"Integer",
+					"min":1,
+					"max":128
+				},
+				"Is cartesian":
+				{
+					"type":"Boolean"
+				}
+			}
+		}
+  }
+	
+}
