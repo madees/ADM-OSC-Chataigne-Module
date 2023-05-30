@@ -18,7 +18,7 @@ https://adm.ebu.io/
 To download and learn more about Chataigne, please visit : http://benjamin.kuperberg.fr/chataigne/
 And Ben's Youtube channel where you can find tutorials : https://youtu.be/RSBU9MwJNLY
 
-! NOTE: This a personal initiative, note supported by EBU.
+! NOTE: This a personal initiative, not supported by EBU.
 
 For global support on how to use Chataigne and its modules, please join us on Discord : 
 https://discord.com/invite/ngnJ5z my contact there is also "madees".
