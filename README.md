@@ -22,7 +22,7 @@ For global support on how to use Chataigne and its modules, please join us on Di
 https://discord.com/invite/ngnJ5z my contact there is also "madees".
 
 ## Installation
-To install the Custom Module, unzip the folder to your Documents/Chataigne/Modules folder.
+To install the Custom Module, download and unzip the files to your Documents/Chataigne/Modules folder.
 
 ## Principle of use
 First set IP's and ports in /modules/adm_osc/parameters.
