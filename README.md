@@ -2,6 +2,7 @@
 Chataigne module to retreive parameters or control ADM-OSC object based audio (OBA) software or hardware with OSC protocol.  
 
 About ADM-OSC, an industry initiative to standardization of Object Based Audio (OBA) positioning data in live production ecosystems, by implementing the Audio Definition Model (ADM) over Open Sound Control (OSC).
+
 To know more, please consult the website :
 https://immersive-audio-live.github.io/ADM-OSC/
 On Github :
