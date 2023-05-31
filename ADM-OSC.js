@@ -1,4 +1,4 @@
-/* Chataigne Module for ADM-OSC v1.0 (c) Mathieu Delquignies, 5/2023
+/* Chataigne Module for ADM-OSC v1.1 (c) Mathieu Delquignies, 5/2023
 ===============================================================================
 This file is a Chataigne Custom Module to test and map ADM-OSC metadatas.
 It's purpose is to fast prototype implementation, test features and bridges.
@@ -40,7 +40,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 // Module parameters
  var getObjectsXYZ=false;
  var getObjectsAED=false;
- var getObjectsGan=false;
+ var getObjectsGain=false;
  var getObjectsCartesian=false;
 
 // objects parameters containers pointers arrays
@@ -53,18 +53,29 @@ var dParam = [];
 var gainParam = [];
 var cartesianParam = [];
 
+var updateRate;
+var nbObjects;
+
 /** 
  * Module intialisation
  */
 function init()
 {
+	// Setup default reception update rate and get update states as in module GUI
+	updateRate = local.parameters.getUpdateRate.get();
+	script.setUpdateRate(updateRate);
+	getObjectsXYZ=local.parameters.getSoundObjectsPositionsXYZ.get();
+	getObjectsAED=local.parameters.getSoundObjectsPositionsAED.get();
+	getObjectsGain=local.parameters.getSoundObjectsGain.get();
+	getObjectsCartesian=local.parameters.getSoundObjectsCartesian.get();
+	nbObjects=local.parameters.numberOfObjects.get();
+
 	// Create the Objects container
 	createObjectsContainer();
 
 	// Module GUI settings
 	local.scripts.setCollapsed(true);
 }
-
 /**
  * Callback when a module parameter has changed
  */
@@ -72,11 +83,35 @@ function moduleParameterChanged(param)
 {
 	if(param.isParameter())
 	{
+		if(param.is(local.parameters.getUpdateRate))
+		{
+			// Get Update Rate parameter has changed
+			updateRate = local.parameters.getUpdateRate.get();
+			script.setUpdateRate(updateRate);
+		}
 		if(param.is(local.parameters.numberOfObjects))
 		{
 			// Number of objects changed.
+			nbObjects=local.parameters.numberOfObjects.get();
 			// Reconstruct the objects parameters containers with new amount.
 			createObjectsContainer();
+		}
+		// handling of "get" parameters settings changes
+		if(param.is(local.parameters.getSoundObjectsPositionsXYZ))
+		{
+			getObjectsXYZ=param.get();
+		}
+		if(param.is(local.parameters.getSoundObjectsPositionsAED))
+		{
+			getObjectsAED=param.get();
+		}
+		if(param.is(local.parameters.getSoundObjectsGain))
+		{
+			getObjectsGain=param.get();
+		}
+		if(param.is(local.parameters.getSoundObjectsCartesian))
+		{
+			getObjectsCartesian=param.get();
 		}
 	}
 }
@@ -94,54 +129,124 @@ function oscEvent(address, args)
 		if(address[2]=="obj")
 		{
 			var objectID =parseInt(address[3]);
-			if(objectID>local.parameters.numberOfObjects.get())
+			if(objectID>nbObjects)
 			{
-				util.showMessageBox("Received object number "+numberOfObjects, "This object isn't handeld by the module. Please cahnge the number of objects in module parameters.","warning", "Ok, got it.");
+				script.logWarning("Received not handled object number #"+objectID);
 				return;
 			}
 			if(address[4]=="azim")
 			{
+				if(args.length == 0)
+				{
+				azim(objectID, aParam[objectID].get());
+				}
+				else
+				{
 				aParam[objectID].set(args[0]);
+				}
 			}
 			if(address[4]=="elev")
 			{
+				if(args.length == 0)
+				{
+				elev(objectID, eParam[objectID].get());
+				}
+				else
+				{
 				eParam[objectID].set(args[0]);
+				}
 			}
 			if(address[4]=="dist")
 			{
+				if(args.length == 0)
+				{
+				dist(objectID, dParam[objectID].get());
+				}
+				else
+				{
 				dParam[objectID].set(args[0]);
+				}
 			}
 			if(address[4]=="aed")
 			{
+				if(args.length == 0)
+				{
+				aed(objectID, aParam[objectID].get(), eParam[objectID].get(), dParam[objectID].get());
+				}
+				else
+				{
 				aParam[objectID].set(args[0]);
 				eParam[objectID].set(args[1]);
 				dParam[objectID].set(args[2]);
+				}
 			}
 			if(address[4]=="x")
 			{
+				if(args.length == 0)
+				{
+				x(objectID, xParam[objectID].get());
+				}
+				else
+				{
 				xParam[objectID].set(args[0]);
+				}
 			}
 			if(address[4]=="y")
 			{
+				if(args.length == 0)
+				{
+				y(objectID, yParam[objectID].get());
+				}
+				else
+				{
 				yParam[objectID].set(args[0]);
+				}
 			}
 			if(address[4]=="z")
 			{
+				if(args.length == 0)
+				{
+				z(objectID, zParam[objectID].get());
+				}
+				else
+				{
 				zParam[objectID].set(args[0]);
+				}
 			}
 			if(address[4]=="xyz")
 			{
+				if(args.length == 0)
+				{
+				xyz(objectID, xParam[objectID].get(), yParam[objectID].get(), zParam[objectID].get());
+				}
+				else
+				{
 				xParam[objectID].set(args[0]);
 				yParam[objectID].set(args[1]);
 				zParam[objectID].set(args[2]);
+				}
 			}
 			if(address[4]=="gain")
 			{
+				if(args.length == 0)
+				{
+				gain(objectID, gainParam[objectID].get());
+				}
+				else
+				{
 				gainParam[objectID].set(args[0]);
+				}
 			}
 			if(address[4]=="cartesian")
 			{
+				if(args.length == 0)
+				{
+				cartesian(objectID, cartesianParam[objectID].get());
+				}
+				else
+				{
 				cartesianParam[objectID].set(args[0]==1);
+				}
 			}
 		}
 		if((address[2]=="config") & (address[3]=="obj"))
@@ -149,8 +254,47 @@ function oscEvent(address, args)
 			var objectID =parseInt(address[4]);
 			if(address[5]=="cartesian")
 			{
+				if(args.length == 0)
+				{
+				cartesian(objectID, cartesianParam[objectID].get());
+				}
+				else
+				{
 				cartesianParam[objectID].set(args[0]==1);
+				}
 			}
+		}
+	}
+}
+/**
+ * This function is called automatically by Chataigne at updateRate period. 
+ *
+ */
+function update(updateRate) 
+{
+	// Sends commands to retreive values, at specified updateRate.
+	if(getObjectsAED)
+	{
+		for (var i = 1; i < (nbObjects +1); i++) {
+			getAED(i);
+		}
+	}
+	if(getObjectsXYZ)
+	{
+		for (var i = 1; i < (nbObjects +1); i++) {
+			getXYZ(i);
+		}
+	}
+	if(getObjectsGain)
+	{
+		for (var i = 1; i < (nbObjects +1); i++) {
+			getGain(i);
+		}
+	}
+	if(getObjectsCartesian)
+	{
+		for (var i = 1; i < (nbObjects +1); i++) {
+			getCartesian(i);
 		}
 	}
 }
@@ -165,12 +309,10 @@ function createObjectsContainer()
   	local.values.removeContainer("Objects parameters");
 	// Add the Source container
   	ObjectsContainer = local.values.addContainer("Objects parameters");
-	// Get the number of objects to create
-	var NbObjects = local.parameters.numberOfObjects.get();
 
 	// Add X container & values for cartesian X position
 	xContainer = ObjectsContainer.addContainer("x");
-	for (var i = 1; i < (NbObjects +1); i++) {
+	for (var i = 1; i < (nbObjects +1); i++) {
     	xParam[i]= xContainer.addFloatParameter(i, "x", 0, -1, 1);
 		xParam[i].setAttribute("readonly", true);
     	};
@@ -178,7 +320,7 @@ function createObjectsContainer()
 
 	// Add Y container & values for cartesian Y position
 	yContainer = ObjectsContainer.addContainer("y");
-	for (var i = 1; i < (NbObjects +1); i++) {
+	for (var i = 1; i < (nbObjects +1); i++) {
 		yParam[i]= yContainer.addFloatParameter(i, "y", 0, -1, 1);
 		yParam[i].setAttribute("readonly", true);
 		};
@@ -186,7 +328,7 @@ function createObjectsContainer()
 
 	// Add Z container & values for cartesian altitude
 	zContainer = ObjectsContainer.addContainer("z");
-	for (var i = 1; i < (NbObjects +1); i++) {
+	for (var i = 1; i < (nbObjects +1); i++) {
 		zParam[i]= zContainer.addFloatParameter(i, "z", 0, -1, 1);
 		zParam[i].setAttribute("readonly", true);
 		};
@@ -194,7 +336,7 @@ function createObjectsContainer()
 
 	// Add A container & values for polar azimuth
 	aContainer = ObjectsContainer.addContainer("a");
-	for (var i = 1; i < (NbObjects +1); i++) {
+	for (var i = 1; i < (nbObjects +1); i++) {
 		aParam[i]= aContainer.addFloatParameter(i, "a", 0, -180, 180);
 		aParam[i].setAttribute("readonly", true);
 		};
@@ -202,7 +344,7 @@ function createObjectsContainer()
 
 	// Add E container & values for polar elevation
 	eContainer = ObjectsContainer.addContainer("e");
-	for (var i = 1; i < (NbObjects +1); i++) {
+	for (var i = 1; i < (nbObjects +1); i++) {
 		eParam[i]= eContainer.addFloatParameter(i, "e", 0, -90, 90);
 		eParam[i].setAttribute("readonly", true);
 		};
@@ -210,7 +352,7 @@ function createObjectsContainer()
 
 	// Add R container & values for polar radius
 	dContainer = ObjectsContainer.addContainer("d");
-	for (var i = 1; i < (NbObjects +1); i++) {
+	for (var i = 1; i < (nbObjects +1); i++) {
 		dParam[i]= dContainer.addFloatParameter(i, "d", 1, 0, 1);
 		dParam[i].setAttribute("readonly", true);
 		};
@@ -218,7 +360,7 @@ function createObjectsContainer()
 
 	// Add gain container & values for object gain
 	gainContainer = ObjectsContainer.addContainer("gain");
-	for (var i = 1; i < (NbObjects +1); i++) {
+	for (var i = 1; i < (nbObjects +1); i++) {
 		gainParam[i]= gainContainer.addFloatParameter(i, "gain", 0, 0, 1);
 		gainParam[i].setAttribute("readonly", true);	
 		};
@@ -226,7 +368,7 @@ function createObjectsContainer()
 
 	// Add cartesian container & values for object coordinate type (1 is cartesian, 0 is spherical)
 	cartesianContainer = ObjectsContainer.addContainer("cartesian");
-	for (var i = 1; i < (NbObjects +1); i++) {
+	for (var i = 1; i < (nbObjects +1); i++) {
 		cartesianParam[i]= cartesianContainer.addBoolParameter(i, "cartesian", 1);
 		cartesianParam[i].setAttribute("readonly", true);	
 		};
@@ -279,7 +421,7 @@ function dist(sourceIndex, distance)
 /**
  * aed	: Send spheric coordinate of sound location.
  * 1 int [1, 128] object index
- * 2 float [-180, 180] in degrees. -90 is on the Right, 0 is in front.	
+ * 2 Point3D [a, e, d] [[-180, -90, 0],[180, 90, 1]]	
  * 
  * example : /adm/obj/4/aed -22.5 12.7 0.9
  */
@@ -327,7 +469,7 @@ function z(sourceIndex, posZ)
 /**
  * xyz	: Send (x,y,z) position of sound object.
  * 1 int [1, 128] object index
- * 2 Point3D [[-1, -1, -1],[1,1,1]]
+ * 2 Point3D [x,y,z] [[-1, -1, -1],[1,1,1]]
  * 
  * example : /adm/obj/4/xyz -0.9 0.15 0.7
  * compact format enables synchronicity of position changes and also less network traffic
@@ -369,6 +511,104 @@ function cartesian(sourceIndex, cartesian)
 		local.send("/adm/config/obj/"+sourceIndex+"/cartesian", 0);
 		// issue in 0.4 spec as above, ADM-OSC Tester tool use this instead:
 		local.send("/adm/obj/"+sourceIndex+"/cartesian", 0);
-	}
-	
+	}	
+}
+/**
+ * getAzim	: Send azimuth of sound location query.
+ * 1 int [1, 128] object index
+ * 
+ */
+function getAzim(sourceIndex) 
+{
+	local.send("/adm/obj/"+sourceIndex+"/azim");
+}
+
+/**
+ * getElev	: Send elevation of sound location query.
+ * 1 int [1, 128] object index
+ * 
+ */
+function getElev(sourceIndex) 
+{
+	local.send("/adm/obj/"+sourceIndex+"/elev");
+}
+
+/**
+ * getDist	: Send distance from origin query.
+ * 1 int [1, 128] object index
+ * 
+ */
+function getDist(sourceIndex) 
+{
+	local.send("/adm/obj/"+sourceIndex+"/dist");
+}
+
+/**
+ * getAED	: Send spheric coordinate of sound location query.
+ * 1 int [1, 128] object index	
+ * 
+ */
+function getAED(sourceIndex) 
+{
+	local.send("/adm/obj/"+sourceIndex+"/aed");
+}
+
+/**
+ * getX	: Send x position of sound object query.
+ * 1 int [1, 128] object index
+ * 
+ */
+function getX(sourceIndex) 
+{
+	local.send("/adm/obj/"+sourceIndex+"/x");
+}
+
+/**
+ * getY	: Send y position of sound object query.
+ * 1 int [1, 128] object index
+ * 
+ */
+function getY(sourceIndex) 
+{
+	local.send("/adm/obj/"+sourceIndex+"/y");
+}
+
+/**
+ * getZ	: Send z position of sound object query.
+ * 1 int [1, 128] object index
+ * 
+ */
+function getZ(sourceIndex) 
+{
+	local.send("/adm/obj/"+sourceIndex+"/z");
+}
+
+/**
+ * getXYZ : Send (x,y,z) position of sound object query.
+ * 1 int [1, 128] object index
+ * 
+ */
+function getXYZ(sourceIndex) 
+{
+	local.send("/adm/obj/"+sourceIndex+"/xyz");
+}
+
+/**
+ * getGain	: Send gain of sound object query.
+ * 1 int [1, 128] object index
+ * 
+ */
+function getGain(sourceIndex) 
+{
+	local.send("/adm/obj/"+sourceIndex+"/gain");
+}
+
+/**
+ * getCartesian	: Send coordinate type of sound object query.
+ * 1 int [1, 128] object index
+ * 
+ */
+function getCartesian(sourceIndex) 
+{
+		local.send("/adm/config/obj/"+sourceIndex+"/cartesian");
 }
