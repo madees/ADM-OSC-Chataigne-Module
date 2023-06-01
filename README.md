@@ -33,11 +33,34 @@ The objects container receives values from ADM-OSC thirds.
 Select the number of objects to store in values container with /modules/adm_osc/parameters/numberOfObjects.
 They are organised to ease multiplex mappings : you can automatically build list with "Fill...">"from Container" feature.
 
-You can send "get" commands to the third within modules parameters :
+You can automatically send "get" commands to the third within modules parameters :
 - /modules/adm_osc/parameters/getSoundObjectsPositionsXYZ : for (x,y,z) cartesian objects coordinates
 - /modules/adm_osc/parameters/getSoundObjectsPositionsAED : for (a,e,d) spheric objects coordinates
 - /modules/adm_osc/parameters/getSoundObjectsGain : for objects gains
 - /modules/adm_osc/parameters/getSoundObjectsCartesian : for objects config (1=cartesian, 0=spheric)
+
 Those will be polled automatically at /modules/adm_osc/parameters/getUpdateRate frequency.
 
-You may also use Module Commands to send parameters to ADM-OSC third.
+You may also use Module Commands to send parameters to ADM-OSC third :
+
+azim(sourceIndex, azimuthAngle) 
+elev(sourceIndex, elevationAngle) 
+dist(sourceIndex, distance) 
+aed(sourceIndex, aed) 
+x(sourceIndex, posX) 
+y(sourceIndex, posY) 
+z(sourceIndex, posZ) 
+xyz(sourceIndex, xyz) 
+gain(sourceIndex, gain) 
+cartesian(sourceIndex, cartesian)
+
+getAzim(sourceIndex) 
+getElev(sourceIndex) 
+getDist(sourceIndex) 
+getAED(sourceIndex) 
+getX(sourceIndex) 
+getY(sourceIndex) 
+getZ(sourceIndex) 
+getXYZ(sourceIndex) 
+getGain(sourceIndex) 
+getCartesian(sourceIndex) 
