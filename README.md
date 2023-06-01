@@ -65,3 +65,10 @@ And send queries commands :
 - getXYZ(sourceIndex) 
 - getGain(sourceIndex) 
 - getCartesian(sourceIndex) 
+
+## About example Noisette file
+Simple multiplex mapping examples for 64 objects:
+- "X,Y to X,Y" send ADM-OSC received (X,Y) cartesian positions to DS100
+- "Z to FG" map and send ADM-OSC received Z cartesian position to FG (Function Groups) levels. FG1 is the lower, FG2 is the upper.
+- "A,D" to "X,Y" convert and send ADM-OSC received (A,D) spheric positions to DS100
+- "D to level" curve map and send ADM-OSC received D distance to DS100 object level attenuation
