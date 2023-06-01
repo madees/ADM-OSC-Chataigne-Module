@@ -54,6 +54,7 @@ You may also use Module Commands to send parameters to ADM-OSC third :
 - gain(sourceIndex, gain) 
 - cartesian(sourceIndex, cartesian)
 
+And send queries commands :
 - getAzim(sourceIndex) 
 - getElev(sourceIndex) 
 - getDist(sourceIndex) 
