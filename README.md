@@ -35,18 +35,18 @@ The objects container receives values from ADM-OSC thirds.
 Select the number of objects to store in values container with /modules/adm_osc/parameters/numberOfObjects.
 They are organised to ease multiplex mappings : you can automatically build list with "Fill...">"from Container" feature.
 
-You can automatically send "get" commands to the third within modules parameters :
-- /modules/adm_osc/parameters/getSoundObjectsPositionsXYZ : for (x,y,z) cartesian objects coordinates
-- /modules/adm_osc/parameters/getSoundObjectsPositionsAED : for (a,e,d) spheric objects coordinates
-- /modules/adm_osc/parameters/getSoundObjectsGain : for objects gains
-- /modules/adm_osc/parameters/getSoundObjectsCartesian : for objects config (1=cartesian, 0=spheric)
+You can automatically send "get" commands to the third with /modules/adm_osc/parameters/
+- getSoundObjectsPositionsXYZ : for (x,y,z) cartesian objects coordinates
+- getSoundObjectsPositionsAED : for (a,e,d) spheric objects coordinates
+- getSoundObjectsGain : for objects gains
+- getSoundObjectsCartesian : for objects config (1=cartesian, 0=spheric)
 
 Those will be polled automatically at /modules/adm_osc/parameters/getUpdateRate frequency.
 
 You may also use Module Commands to send parameters to ADM-OSC third :
 
 - azim(sourceIndex, azimuthAngle) 
-- elev(sourceIndex, elevationAngle) 
+- elev(sourceIndex, elevationAngle)
 - dist(sourceIndex, distance) 
 - aed(sourceIndex, aed) 
 - x(sourceIndex, posX) 
@@ -69,8 +69,8 @@ And send queries commands :
 - getCartesian(sourceIndex) 
 
 ## About example Noisette file
-Simple multiplex mapping examples for 64 objects:
-- "X,Y to X,Y" send ADM-OSC received (X,Y) cartesian positions to DS100
-- "Z to FG" map and send ADM-OSC received Z cartesian position to FG (Function Groups) levels. FG1 is the lower, FG2 is the upper.
-- "A,D" to "X,Y" convert and send ADM-OSC received (A,D) spheric positions to DS100
-- "D to level" curve map and send ADM-OSC received D distance to DS100 object level attenuation
+Simple multiplex mappings examples for 64 objects with d&b audiotechnik DS100 module :
+- "X,Y to X,Y" send ADM-OSC received (X,Y) cartesian positions to DS100 default coordinate mapping.
+- "Z to FG" curve map and send ADM-OSC received Z cartesian position to FG (Function Groups) levels. By default, the FG1 is the lower, FG2 is the upper.
+- "A,D" to "X,Y" convert and send ADM-OSC received (A,D) spheric positions to DS100.
+- "D to level" curve map and send ADM-OSC received D distance to DS100 object level attenuation.
