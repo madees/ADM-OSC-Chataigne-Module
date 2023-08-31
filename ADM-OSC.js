@@ -1,4 +1,4 @@
-/* Chataigne Module for ADM-OSC v1.1 (c) Mathieu Delquignies, 5/2023
+/* Chataigne Module for ADM-OSC v1.2 (c) Mathieu Delquignies, 5/2023
 ===============================================================================
 This file is a Chataigne Custom Module to test and map ADM-OSC metadatas.
 It's purpose is to fast prototype implementation, test features and bridges.
@@ -132,6 +132,11 @@ function oscEvent(address, args)
 			if(objectID>nbObjects)
 			{
 				script.logWarning("Received not handled object number #"+objectID);
+				return;
+			}
+			if(objectID<1)
+			{
+				script.logWarning("Received not handled object number -1");
 				return;
 			}
 			if(address[4]=="azim")

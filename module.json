@@ -2,7 +2,7 @@
 	"name": "ADM-OSC",
 	"type": "OSC",
 	"path": "Immersive solution",
-	"version": "1.1",
+	"version": "1.2",
 	"description": "Create a basic client/server that implement basic ADM-OSC communication with stable parameters.\n\n
     Please visit https: //github.com/immersive-audio-live/ADM-OSC to know more about Live ADM-OSC initiative.\n\n
     Chataigne Module specific documentation can be found in the README on GitHub:","url": "https://github.com/madees/ADM-OSC-Module",
