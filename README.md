@@ -43,6 +43,8 @@ You can automatically send "get" commands to the third with /modules/adm_osc/par
 
 Those will be polled automatically at /modules/adm_osc/parameters/getUpdateRate frequency.
 
+You can also forward input to output(s) with Module's Pass-through feature.
+
 You may also use Module Commands to send parameters to ADM-OSC third :
 
 - azim(sourceIndex, azimuthAngle) 
