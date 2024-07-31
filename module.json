@@ -2,8 +2,10 @@
 	"name": "ADM-OSC",
 	"type": "OSC",
 	"path": "Immersive solution",
-	"version": "1.3",
-	"description": "Create a basic client/server that implement basic ADM-OSC communication with stable parameters.\n\nPlease visit https: //github.com/immersive-audio-live/ADM-OSC to know more about Live ADM-OSC initiative.\n\nChataigne Module specific documentation can be found in the README on GitHub:",
+	"version": "1.4",
+	"description": "Create a basic client/server that implement basic ADM-OSC communication with stable parameters.\n\n
+    Please visit https: //github.com/immersive-audio-live/ADM-OSC to know more about Live ADM-OSC initiative.\n\n
+    Chataigne Module specific documentation can be found in the README on GitHub:",
 	"url": "https://github.com/madees/ADM-OSC-Chataigne-Module",
 	"downloadURL": "https://github.com/madees/ADM-OSC-Chataigne-Module/archive/master.zip",
 	"hasInput": true,
@@ -156,7 +158,7 @@
 				},
 				"x": {
 					"type": "Float",
-					"min": 0,
+					"min": -1,
 					"max": 1
 				}
 			}
@@ -172,7 +174,7 @@
 				},
 				"y": {
 					"type": "Float",
-					"min": 0,
+					"min": -1,
 					"max": 1
 				}
 			}
@@ -188,7 +190,7 @@
 				},
 				"z": {
 					"type": "Float",
-					"min": 0,
+					"min": -1,
 					"max": 1
 				}
 			}
