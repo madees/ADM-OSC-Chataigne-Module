@@ -10,6 +10,8 @@ On Github :
 https://github.com/immersive-audio-live/ADM-OSC
 
 The current implementation of the module is ADM-OSC version 1.0.
+It is described here : https://aes2.org/publications/elibrary-page/?id=22722
+
 Usage may be first to check complicance to this specification, as sand box to help implementation for third parties, and bridge to other modules and protocols.
 You may participate to this initiative by mentionning any issues, please document the third party software/hardware used and informations to reproduce the issue. Thanks a lot in advance !
 
