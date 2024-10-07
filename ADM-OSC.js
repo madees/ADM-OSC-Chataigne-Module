@@ -1,8 +1,8 @@
-/* Chataigne Module for ADM-OSC v1.2 (c) Mathieu Delquignies, 5/2023
+/* Chataigne Module for ADM-OSC v1.5 (c) Mathieu Delquignies, 9/2024
 ===============================================================================
 This file is a Chataigne Custom Module to test and map ADM-OSC metadatas.
 It's purpose is to fast prototype implementation, test features and bridges.
-Current implementation is version 0.4 :
+Current implementation is version 1.0 :
 https://immersive-audio-live.github.io/ADM-OSC/html/adm_spec.html
 
 Create a basic client/server that implement basic ADM-OSC communication with stable parameters.
@@ -41,9 +41,9 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  var getObjectsXYZ=false;
  var getObjectsAED=false;
  var getObjectsGain=false;
- var getObjectsCartesian=false;
+ var getObjectsMute=false;
 
-// objects parameters containers pointers arrays
+// objects parameters container pointers
 var xParam = [];
 var yParam = [];
 var zParam = [];
@@ -51,8 +51,13 @@ var aParam = [];
 var eParam = [];
 var dParam = [];
 var gainParam = [];
-var cartesianParam = [];
+var muteParam = [];
+var wParam = [];
+var drefParam = [];
+var dmaxParam = [];
+var nameParam = [];
 
+// Module parameters
 var updateRate;
 var nbObjects;
 
@@ -67,7 +72,7 @@ function init()
 	getObjectsXYZ=local.parameters.getSoundObjectsPositionsXYZ.get();
 	getObjectsAED=local.parameters.getSoundObjectsPositionsAED.get();
 	getObjectsGain=local.parameters.getSoundObjectsGain.get();
-	getObjectsCartesian=local.parameters.getSoundObjectsCartesian.get();
+	getObjectsMute=local.parameters.getSoundObjectsMute.get();
 	nbObjects=local.parameters.numberOfObjects.get();
 
 	// Create the Objects container
@@ -109,9 +114,9 @@ function moduleParameterChanged(param)
 		{
 			getObjectsGain=param.get();
 		}
-		if(param.is(local.parameters.getSoundObjectsCartesian))
+		if(param.is(local.parameters.getSoundObjectsMute))
 		{
-			getObjectsCartesian=param.get();
+			getObjectsMute=param.get();
 		}
 	}
 }
@@ -123,9 +128,10 @@ function oscEvent(address, args)
 {
 	// Convert address string to string array
 	var address = address.split("/");
-	// Parse address
+	// Parse address (no switch function in JUCE JS)
 	if(address[1]=="adm")
 	{
+		// Check first for objects changes
 		if(address[2]=="obj")
 		{
 			var objectID =parseInt(address[3]);
@@ -136,7 +142,7 @@ function oscEvent(address, args)
 			}
 			if(objectID<1)
 			{
-				script.logWarning("Received not handled object number -1");
+				script.logWarning("Received not handled object number <1");
 				return;
 			}
 			if(address[4]=="azim")
@@ -218,6 +224,18 @@ function oscEvent(address, args)
 				zParam[objectID].set(args[0]);
 				}
 			}
+			if(address[4]=="xy")
+			{
+				if(args.length == 0)
+				{
+				xy(objectID, xParam[objectID].get(), yParam[objectID].get());
+				}
+				else
+				{
+				xParam[objectID].set(args[0]);
+				yParam[objectID].set(args[1]);
+				}
+			}
 			if(address[4]=="xyz")
 			{
 				if(args.length == 0)
@@ -242,33 +260,94 @@ function oscEvent(address, args)
 				gainParam[objectID].set(args[0]);
 				}
 			}
-			if(address[4]=="cartesian")
+			if(address[4]=="dref")
+				{
+					if(args.length == 0)
+					{
+					dref(objectID, drefParam[objectID].get());
+					}
+					else
+					{
+					drefParam[objectID].set(args[0]);
+					}
+				}
+			if(address[4]=="dmax")
+				{
+					if(args.length == 0)
+					{
+					dmax(objectID, dmaxParam[objectID].get());
+					}
+					else
+					{
+					dmaxParam[objectID].set(args[0]);
+					}
+				}	
+			if(address[4]=="mute")
 			{
 				if(args.length == 0)
 				{
-				cartesian(objectID, cartesianParam[objectID].get());
+				mute(objectID, muteParam[objectID].get());
 				}
 				else
 				{
-				cartesianParam[objectID].set(args[0]==1);
+				muteParam[objectID].set(args[0]==1);
 				}
 			}
+			if(address[4]=="name")
+				{
+					if(args.length == 0)
+					{
+					name(objectID, nameParam[objectID].get());
+					}
+					else
+					{
+					nameParam[objectID].set(args[0]);
+					}
+				}
 		}
-		if((address[2]=="config") & (address[3]=="obj"))
+		// Next for environement change
+		if((address[2]=="env"))
 		{
-			var objectID =parseInt(address[4]);
-			if(address[5]=="cartesian")
+			if(address[3]=="change")
 			{
 				if(args.length == 0)
 				{
-				cartesian(objectID, cartesianParam[objectID].get());
+				change(local.values.environement.change.get());
 				}
 				else
 				{
-				cartesianParam[objectID].set(args[0]==1);
+					local.values.environement.change.set(args[0]);
 				}
 			}
 		}
+		// Next for listener change
+		if((address[2]=="lis"))
+			{
+				if(address[3]=="xyz")
+				{
+					if(args.length == 0)
+					{
+					lisXYZ(local.values.listener.xyz.get());
+					}
+					else
+					{
+					local.values.listener.xyz.set(args[0],args[1],args[2]);
+					}
+				}
+				if(address[3]=="ypr")
+				{
+					if(args.length == 0)
+					{
+					lisYPR(local.values.listener.ypr.get());
+					}
+					else
+					{
+					local.values.listener.ypr.set(args[0],args[1],args[2]);
+					}
+				}
+				
+			
+			}
 	}
 }
 /**
@@ -296,10 +375,10 @@ function update(updateRate)
 			getGain(i);
 		}
 	}
-	if(getObjectsCartesian)
+	if(getObjectsMute)
 	{
 		for (var i = 1; i < (nbObjects +1); i++) {
-			getCartesian(i);
+			getMute(i);
 		}
 	}
 }
@@ -355,13 +434,21 @@ function createObjectsContainer()
 		};
 	eContainer.setCollapsed(true);
 
-	// Add R container & values for polar radius
+	// Add D container & values for polar radius (distance)
 	dContainer = ObjectsContainer.addContainer("d");
 	for (var i = 1; i < (nbObjects +1); i++) {
 		dParam[i]= dContainer.addFloatParameter(i, "d", 1, 0, 1);
 		dParam[i].setAttribute("readonly", true);
 		};
 	dContainer.setCollapsed(true);
+	
+	// Add W container & values for width
+	wContainer = ObjectsContainer.addContainer("w");
+	for (var i = 1; i < (nbObjects +1); i++) {
+		wParam[i]= wContainer.addFloatParameter(i, "w", 0, 0, 1);
+		wParam[i].setAttribute("readonly", true);
+		};
+	wContainer.setCollapsed(true);
 
 	// Add gain container & values for object gain
 	gainContainer = ObjectsContainer.addContainer("gain");
@@ -371,20 +458,46 @@ function createObjectsContainer()
 		};
 	gainContainer.setCollapsed(true);
 
-	// Add cartesian container & values for object coordinate type (1 is cartesian, 0 is spherical)
-	cartesianContainer = ObjectsContainer.addContainer("cartesian");
+	// Add dref container & values for object dref
+	drefContainer = ObjectsContainer.addContainer("dref");
 	for (var i = 1; i < (nbObjects +1); i++) {
-		cartesianParam[i]= cartesianContainer.addBoolParameter(i, "cartesian", 1);
-		cartesianParam[i].setAttribute("readonly", true);	
+		drefParam[i]= drefContainer.addFloatParameter(i, "dref", 0, 0, 1);
+		drefParam[i].setAttribute("readonly", true);	
 		};
-	cartesianContainer.setCollapsed(true);
+	drefContainer.setCollapsed(true);
+
+	// Add dmax container & values for object dmax
+	dmaxContainer = ObjectsContainer.addContainer("dmax");
+	for (var i = 1; i < (nbObjects +1); i++) {
+		dmaxParam[i]= dmaxContainer.addFloatParameter(i, "dmax", 0, 0, 1000);
+		dmaxParam[i].setAttribute("readonly", true);	
+		};
+	dmaxContainer.setCollapsed(true);
+
+	// Add mute state container (1 is mute, 0 is unmute)
+	muteContainer = ObjectsContainer.addContainer("mute");
+	for (var i = 1; i < (nbObjects +1); i++) {
+		muteParam[i]= muteContainer.addBoolParameter(i, "mute", 1);
+		muteParam[i].setAttribute("readonly", true);	
+		};
+	muteContainer.setCollapsed(true);
+
+	// Add names container
+	nameContainer = ObjectsContainer.addContainer("name");
+	for (var i = 1; i < (nbObjects +1); i++) {
+		nameParam[i]= nameContainer.addStringParameter(i, "name","");
+		nameParam[i].setAttribute("readonly", true);	
+		};
+	muteContainer.setCollapsed(true);
+
+	
 }
 
 /**
  * Callback functions for module commands
  * 
- * As described in https://immersive-audio-live.github.io/ADM-OSC/html/adm_spec.html
- * implementation version 0.4
+ * As described in https://immersive-audio-live.github.io/ADM-OSC/
+ * implementation version 1.0
  */
 
 /**
@@ -472,6 +585,19 @@ function z(sourceIndex, posZ)
 }
 
 /**
+ * xy	: Send (x,y) position of sound object.
+ * 1 int [1, 128] object index
+ * 2 Point2D [x,y] [[-1,-1],[1,1]]
+ * 
+ * example : /adm/obj/4/xy -0.9 0.15
+ * compact format enables synchronicity of position changes and also less network traffic
+ */
+function xy(sourceIndex, xy) 
+{
+	local.send("/adm/obj/"+sourceIndex+"/xy", xy[0], xy[1]);
+}
+
+/**
  * xyz	: Send (x,y,z) position of sound object.
  * 1 int [1, 128] object index
  * 2 Point3D [x,y,z] [[-1, -1, -1],[1,1,1]]
@@ -497,27 +623,104 @@ function gain(sourceIndex, gain)
 }
 
 /**
- * cartesian	: Send coordiante type of sound object.
+ * w	: Send width of sound object.
  * 1 int [1, 128] object index
- * 2 boolean If the flag is set to 1, Cartesian coordinates are used. 
- * Otherwise spherical coordinates are used.
+ * 2 float [0,1] width	
  * 
- * example : /adm/config/obj/1/cartesian 0
+ * example : /adm/obj/3/w 0.5
  */
-function cartesian(sourceIndex, cartesian) 
+function w(sourceIndex, w) 
 {
-	if(cartesian)
+	local.send("/adm/obj/"+sourceIndex+"/w", w);
+}
+
+/**
+ * dref	: Send dref of sound object.
+ * 1 int [1, 128] object index
+ * 2 float [0,1] dref	
+ * 
+ * example : /adm/obj/3/dref 0.5
+ */
+function dref(sourceIndex, dref) 
+{
+	local.send("/adm/obj/"+sourceIndex+"/dref", dref);
+}
+
+/**
+ * dmax : Send dmax of sound object.
+ * 1 int [1, 128] object index
+ * 2 float [0,?] dmax in meters
+ * 
+ * example : /adm/obj/3/dmax 10
+ */
+function dmax(sourceIndex, dmax) 
+{
+	local.send("/adm/obj/"+sourceIndex+"/dmax", dmax);
+}
+
+/**
+ * mute	: Send mute state of sound object.
+ * 1 int [1, 128] object index
+ * 2 int If the flag is set to 1, object is muted. 0 is un-muted.
+ * 
+ * example : /adm/obj/1/mute 0
+ */
+function mute(sourceIndex, mute) 
+{
+	if(mute)
 	{
-		local.send("/adm/config/obj/"+sourceIndex+"/cartesian", 1);
-		// issue in 0.4 spec as above, ADM-OSC Tester tool use this instead:
-		local.send("/adm/obj/"+sourceIndex+"/cartesian", 1);
+		local.send("/adm/obj/"+sourceIndex+"/mute", 1);
 	} else
 	{
-		local.send("/adm/config/obj/"+sourceIndex+"/cartesian", 0);
-		// issue in 0.4 spec as above, ADM-OSC Tester tool use this instead:
-		local.send("/adm/obj/"+sourceIndex+"/cartesian", 0);
+		local.send("/adm/obj/"+sourceIndex+"/mute", 0);
 	}	
 }
+
+/**
+ * name	: Send name of sound object.
+ * 1 int [1, 128] object index
+ * 2 string
+ * 
+ * example : /adm/obj/1/name "bass"
+ */
+function name(sourceIndex, name) 
+{
+	local.send("/adm/obj/"+sourceIndex+"/name", name);
+}
+
+/**
+ * env/change : Send string to describe environment change
+ * 1 string
+ * 
+ * example : /adm/env/change "sunset"
+ */
+function change(change) 
+{
+	local.send("/adm/env/change", change);
+}
+
+/**
+ * lis/xyz : Send listener position
+ * 1 Point3D x, y, z listener position
+ * 
+ * example : /adm/lis/xyz 0, 0, 0
+ */
+function lisXYZ(lisXYZ) 
+{
+	local.send("/adm/lis/xyz", lisXYZ[0], lisXYZ[1], lisXYZ[2]);
+}
+
+/**
+ * lis/ypr : Send listener orientation
+ * 1 Point3D yaw, pitch, roll listener head orientation in degrees
+ * 
+ * example : /adm/lis/xyz 0, 0, 0
+ */
+function lisYPR(lisYPR) 
+{
+	local.send("/adm/lis/ypr", lisYPR[0], lisYPR[1], lisYPR[2]);
+}
+
 /**
  * getAzim	: Send azimuth of sound location query.
  * 1 int [1, 128] object index
@@ -609,11 +812,78 @@ function getGain(sourceIndex)
 }
 
 /**
- * getCartesian	: Send coordinate type of sound object query.
+ * getW	: Send width of sound object query.
  * 1 int [1, 128] object index
  * 
  */
-function getCartesian(sourceIndex) 
+function getW(sourceIndex) 
 {
-		local.send("/adm/config/obj/"+sourceIndex+"/cartesian");
+	local.send("/adm/obj/"+sourceIndex+"/w");
+}
+
+/**
+ * getMute	: Send coordinate type of sound object query.
+ * 1 int [1, 128] object index
+ * 
+ */
+function getMute(sourceIndex) 
+{
+		local.send("/adm/obj/"+sourceIndex+"/mute");
+}
+
+/**
+ * getDref	: Send dref of sound object query.
+ * 1 int [1, 128] object index	
+ * 
+ */
+function getDref(sourceIndex) 
+{
+	local.send("/adm/obj/"+sourceIndex+"/dref");
+}
+
+/**
+ * getDmax : Send dmax of sound object query.
+ * 1 int [1, 128] object index
+ * 
+ */
+function getDmax(sourceIndex) 
+{
+	local.send("/adm/obj/"+sourceIndex+"/dmax");
+}
+
+/**
+ * getName	: Send name of sound object query.
+ * 1 int [1, 128] object index
+ * 
+ */
+function getName(sourceIndex) 
+{
+	local.send("/adm/obj/"+sourceIndex+"/name");
+}
+
+/**
+ * getChange : Query the last change
+ * 
+ */
+function getChange() 
+{
+	local.send("/adm/env/change");
+}
+
+/**
+ * getLisXYZ : Send listener position query
+ * 
+ */
+function getLisXYZ() 
+{
+	local.send("/adm/lis/xyz");
+}
+
+/**
+ * getLisYPR : Send listener orientation query
+ * 
+ */
+function getLisYPR() 
+{
+	local.send("/adm/lis/ypr");
 }

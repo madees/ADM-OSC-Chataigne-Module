@@ -2,10 +2,8 @@
 	"name": "ADM-OSC",
 	"type": "OSC",
 	"path": "Immersive solution",
-	"version": "1.4",
-	"description": "Create a basic client/server that implement basic ADM-OSC communication with stable parameters.\n\n
-    Please visit https: //github.com/immersive-audio-live/ADM-OSC to know more about Live ADM-OSC initiative.\n\n
-    Chataigne Module specific documentation can be found in the README on GitHub:",
+	"version": "1.5",
+	"description": "Create a basic client/server that implement basic ADM-OSC communication with stable parameters.\n\nPlease visit https: //github.com/immersive-audio-live/ADM-OSC to know more about Live ADM-OSC initiative.\n\nChataigne Module specific documentation can be found in the README on GitHub:",
 	"url": "https://github.com/madees/ADM-OSC-Chataigne-Module",
 	"downloadURL": "https://github.com/madees/ADM-OSC-Chataigne-Module/archive/master.zip",
 	"hasInput": true,
@@ -24,13 +22,13 @@
 	"defaults": {
 		"autoAdd": false,
 		"oscInput": {
-			"localPort": 38033
+			"localPort": 4002
 		},
 		"OSC Outputs": {
 			"OSC Output": {
 				"local": true,
 				"remoteHost": "192.168.1.1",
-				"remotePort": 9001
+				"remotePort": 4001
 			}
 		}
 	},
@@ -64,7 +62,7 @@
 			"type": "Boolean",
 			"default": false
 		},
-		"Get Sound Objects cartesian": {
+		"Get Sound Objects mute": {
 			"description": "Update automatically objects container values.\n",
 			"type": "Boolean",
 			"default": false
@@ -73,9 +71,29 @@
 	"scripts": [
 		"ADM-OSC.js"
 	],
-	"values": {},
+	"values": {
+		"Environement": {
+			"type":"Container",
+			"Change": {
+				"description": "Last change in environment",
+				"type": "String"
+			}
+			
+		},
+		"Listener": {
+			"type":"Container",
+			"xyz": {
+				"description": "Listener head position",
+				"type": "Point3D"
+			},
+			"ypr": {
+				"description": "Listener head orientation",
+				"type": "Point3D"
+			}
+		}
+	},
 	"commands": {
-		"Send azim": {
+		"azim": {
 			"menu": "Set objects",
 			"callback": "azim",
 			"parameters": {
@@ -91,7 +109,7 @@
 				}
 			}
 		},
-		"Send elev": {
+		"elev": {
 			"menu": "Set objects",
 			"callback": "elev",
 			"parameters": {
@@ -107,7 +125,7 @@
 				}
 			}
 		},
-		"Send dist": {
+		"dist": {
 			"menu": "Set objects",
 			"callback": "dist",
 			"parameters": {
@@ -123,7 +141,7 @@
 				}
 			}
 		},
-		"Send aed": {
+		"aed": {
 			"menu": "Set objects",
 			"callback": "aed",
 			"parameters": {
@@ -147,7 +165,7 @@
 				}
 			}
 		},
-		"Send x": {
+		"x": {
 			"menu": "Set objects",
 			"callback": "x",
 			"parameters": {
@@ -163,7 +181,7 @@
 				}
 			}
 		},
-		"Send y": {
+		"y": {
 			"menu": "Set objects",
 			"callback": "y",
 			"parameters": {
@@ -179,7 +197,7 @@
 				}
 			}
 		},
-		"Send z": {
+		"z": {
 			"menu": "Set objects",
 			"callback": "z",
 			"parameters": {
@@ -195,7 +213,7 @@
 				}
 			}
 		},
-		"Send xyz": {
+		"xyz": {
 			"menu": "Set objects",
 			"callback": "xyz",
 			"parameters": {
@@ -219,7 +237,29 @@
 				}
 			}
 		},
-		"Send gain": {
+		"xy": {
+			"menu": "Set objects",
+			"callback": "xy",
+			"parameters": {
+				"Source index": {
+					"type": "Integer",
+					"min": 1,
+					"max": 128
+				},
+				"xy": {
+					"type": "Point2D",
+					"min": [
+						-1,
+						-1
+					],
+					"max": [
+						1,
+						1
+					]
+				}
+			}
+		},
+		"gain": {
 			"menu": "Set objects",
 			"callback": "gain",
 			"parameters": {
@@ -235,20 +275,106 @@
 				}
 			}
 		},
-		"Send cartesian": {
-			"menu": "Set config",
-			"callback": "cartesian",
+		"mute": {
+			"menu": "Set objects",
+			"callback": "mute",
 			"parameters": {
 				"Source index": {
 					"type": "Integer",
 					"min": 1,
 					"max": 128
 				},
-				"Is cartesian": {
+				"Is muted": {
 					"type": "Boolean"
 				}
 			}
 		},
+		"w": {
+			"menu": "Set objects",
+			"callback": "w",
+			"parameters": {
+				"Source index": {
+					"type": "Integer",
+					"min": 1,
+					"max": 128
+				},
+				"w": {
+					"type": "Float"
+				}
+			}
+		},
+		"dref": {
+			"menu": "Set objects",
+			"callback": "dref",
+			"parameters": {
+				"Source index": {
+					"type": "Integer",
+					"min": 1,
+					"max": 128
+				},
+				"dref": {
+					"type": "Float",
+					"min":0
+				}
+			}
+		},
+		"dmax": {
+			"menu": "Set objects",
+			"callback": "dmax",
+			"parameters": {
+				"Source index": {
+					"type": "Integer",
+					"min": 1,
+					"max": 128
+				},
+				"dmax": {
+					"type": "Float",
+					"min":0
+				}
+			}
+		},
+		"name": {
+			"menu": "Set objects",
+			"callback": "name",
+			"parameters": {
+				"Source index": {
+					"type": "Integer",
+					"min": 1,
+					"max": 128
+				},
+				"name": {
+					"type": "String"
+				}
+			}
+		},
+		"change": {
+			"menu": "Set env",
+			"callback": "change",
+			"parameters": {
+				"change": {
+					"type": "String"
+				}
+			}
+		},
+		"position": {
+			"menu": "Set lis",
+			"callback": "lisXYZ",
+			"parameters": {
+				"xyz": {
+					"type": "Point3D"
+				}
+			}
+		},
+		"orientation": {
+			"menu": "Set lis",
+			"callback": "lisYPR",
+			"parameters": {
+				"ypr": {
+					"type": "Point3D"
+				}
+			}
+		},
+
 		"Get azim": {
 			"menu": "Get objects",
 			"callback": "getAzim",
@@ -326,6 +452,17 @@
 				}
 			}
 		},
+		"Get xy": {
+			"menu": "Get objects",
+			"callback": "getXY",
+			"parameters": {
+				"Source index": {
+					"type": "Integer",
+					"min": 1,
+					"max": 128
+				}
+			}
+		},
 		"Get xyz": {
 			"menu": "Get objects",
 			"callback": "getXYZ",
@@ -348,9 +485,9 @@
 				}
 			}
 		},
-		"Get cartesian": {
-			"menu": "Get config",
-			"callback": "getCartesian",
+		"Get mute": {
+			"menu": "Get objects",
+			"callback": "getMute",
 			"parameters": {
 				"Source index": {
 					"type": "Integer",
@@ -358,7 +495,53 @@
 					"max": 128
 				}
 			}
+		},
+		"Get dref": {
+			"menu": "Get objects",
+			"callback": "getDref",
+			"parameters": {
+				"Source index": {
+					"type": "Integer",
+					"min": 1,
+					"max": 128
+				}
+			}
+		},
+		"Get dmax": {
+			"menu": "Get objects",
+			"callback": "getMax",
+			"parameters": {
+				"Source index": {
+					"type": "Integer",
+					"min": 1,
+					"max": 128
+				}
+			}
+		},
+		"Get name": {
+			"menu": "Get objects",
+			"callback": "getName",
+			"parameters": {
+				"Source index": {
+					"type": "Integer",
+					"min": 1,
+					"max": 128
+				}
+			}
+		},
+		"Get change": {
+			"menu": "Get env",
+			"callback": "getChange"
+		},
+		"Get lis XYZ": {
+			"menu": "Get lis",
+			"callback": "getLisXYZ"
+		},
+		"Get lis YPR": {
+			"menu": "Get lis",
+			"callback": "getLisYPR"
 		}
+
 
 	}
 }
