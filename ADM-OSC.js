@@ -260,6 +260,17 @@ function oscEvent(address, args)
 				gainParam[objectID].set(args[0]);
 				}
 			}
+			if(address[4]=="w")
+				{
+					if(args.length == 0)
+					{
+					w(objectID, wParam[objectID].get());
+					}
+					else
+					{
+					wParam[objectID].set(args[0]);
+					}
+				}
 			if(address[4]=="dref")
 				{
 					if(args.length == 0)
