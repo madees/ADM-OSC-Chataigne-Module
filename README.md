@@ -78,3 +78,8 @@ Simple multiplex mappings examples for 64 objects with d&b audiotechnik DS100 mo
 
 ## Little helpers for cartesian<>polar conversions
 There is also filter scripts to convert Point3D from cube to sphere and vis versa.
+
+## Ircam OSCAR ADM-OSC mapping file
+“oscar.xml” is a mapping file to setup ADM-OSC in the free VST Plugin OSCAR https://forum.ircam.fr/projects/detail/oscar/ 
+It must be located in "∼/Documents/Ircam/oscar/oscar.xml" (see OSCAR documentaiton for more infos on installation)
+Once done, you can use it to record and playback automation in ADM-OSC format in you favorite DAW.
