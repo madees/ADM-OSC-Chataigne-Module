@@ -2,7 +2,7 @@
 	"name": "ADM-OSC",
 	"type": "OSC",
 	"path": "Immersive solution",
-	"version": "1.5",
+	"version": "1.6",
 	"description": "Create a client/server that implement ADM-OSC communication.\n\nPlease visit https: //github.com/immersive-audio-live/ADM-OSC to know more about Live ADM-OSC initiative.\n\nChataigne Module specific documentation can be found in the README on GitHub:",
 	"url": "https://github.com/madees/ADM-OSC-Chataigne-Module",
 	"downloadURL": "https://github.com/madees/ADM-OSC-Chataigne-Module/archive/master.zip",
@@ -76,7 +76,8 @@
 			"type":"Container",
 			"Change": {
 				"description": "Last change in environment",
-				"type": "String"
+				"type": "String",
+				"readOnly":true
 			}
 			
 		},
@@ -84,11 +85,33 @@
 			"type":"Container",
 			"xyz": {
 				"description": "Listener head position",
-				"type": "Point3D"
+				"type": "Point3D",
+				"readOnly":true,
+				"min": [
+						-1,
+						-1,
+						-1
+					],
+					"max": [
+						1,
+						1,
+						1
+					]
 			},
 			"ypr": {
 				"description": "Listener head orientation",
-				"type": "Point3D"
+				"type": "Point3D",
+				"readOnly":true,
+				"min": [
+						-180,
+						-180,
+						-180
+					],
+					"max": [
+						180,
+						180,
+						180
+					]
 			}
 		}
 	},
@@ -299,7 +322,9 @@
 					"max": 128
 				},
 				"w": {
-					"type": "Float"
+					"type": "Float",
+					"min":0,
+					"max":1
 				}
 			}
 		},
@@ -314,7 +339,8 @@
 				},
 				"dref": {
 					"type": "Float",
-					"min":0
+					"min":0,
+					"max":1
 				}
 			}
 		},
@@ -361,7 +387,17 @@
 			"callback": "lisXYZ",
 			"parameters": {
 				"xyz": {
-					"type": "Point3D"
+					"type": "Point3D",
+					"min": [
+						-1,
+						-1,
+						-1
+					],
+					"max": [
+						1,
+						1,
+						1
+					]
 				}
 			}
 		},
@@ -370,7 +406,17 @@
 			"callback": "lisYPR",
 			"parameters": {
 				"ypr": {
-					"type": "Point3D"
+					"type": "Point3D",
+					"min": [
+						-180,
+						-180,
+						-180
+					],
+					"max": [
+						180,
+						180,
+						180
+					]
 				}
 			}
 		},
