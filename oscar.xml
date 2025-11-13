@@ -21,8 +21,9 @@
     <parameter index="6" name="z" pattern="/adm/obj/$1/z" min="-1" max="1" default="0"/>
     <parameter index="7" name="w" pattern="/adm/obj/$1/w" min="0" max="1" default="0"/>
     <parameter index="8" name="gain" pattern="/adm/obj/$1/gain" min="0" max="1" default="1"/>
-    <parameter index="9" name="dref" pattern="/adm/obj/$1/dref" min="0" max="1000" default="0"/>
-    <parameter index="10" name="dmax" pattern="/adm/obj/$1/dmax" min="0" max="1" default="1"/>
+    <parameter index="9" name="dref" pattern="/adm/obj/$1/dref" min="0" max="1" default="1"/>
+    <parameter index="10" name="dmax" pattern="/adm/obj/$1/dmax" min="0" max="1000" default="1"/>
     <parameter index="11" name="mute" pattern="/adm/obj/$1/mute" min="0" max="1" default="0"/>
 </oscar>
  
+
